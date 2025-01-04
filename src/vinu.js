@@ -3,6 +3,7 @@ const sub = (first, second) => first - second;
 const mul = (first, second) => first * second;
 const div = (first, second) => first / second;
 const mod = (first, second) => first % second;
+
 const vinu_script = `Vinu 2.O
 exit using ctrl+d, ctrl+c, or close()
 %cREPL is running with all permissions allowed.
@@ -11,7 +12,7 @@ exit using ctrl+d, ctrl+c, or close()
 const displayVinu = () =>
   console.log(vinu_script, "color:yellow", "color:white");
 
-const validate_expression = /^\d+\s*(\s*[+-/*%]\s*\d+)*$/;
+const validate_expression = /^\s*\d+\s*(\s*[+-/*%]\s*\d+)*$/;
 export const extract_operands = (expression) => expression.match(/\d+/g);
 export const extract_operators = (expression) => expression.match(/[+-/*%]/g);
 export const is_expression_valid = (expression) =>
