@@ -4,25 +4,37 @@ import {
   replace_vars_with_values,
 } from "./extract_variables.js";
 
-const vinu_version = `%cVinu 2.O
-%cexit using ctrl+d, ctrl+c, or close()
-%cREPL is running with all permissions allowed.
-%cTo specify permissions, run \`vinu repl\` with allow flags.`;
+const vinu_version = `Vinu 2.O
+exit using ctrl+d, ctrl+c, or close()
+\x1b[33mREPL is running with all permissions allowed.\x1b[0m
+To specify permissions, run \`vinu repl\` with allow flags.`;
 
-const displayVinuVersion = () =>
-  console.log(
-    vinu_version,
-    "color:ffffff; font-weight:bold",
-    "color:ffffff; font-weight:bold",
-    "color:yellow;",
-    "color:ffffff; font-weight:bold"
-  );
+const displayVinuVersion = () => console.log(vinu_version);
 
 const validate_variables = function (expression) {
   const un_declared_variable = expression.match(/[a-z_]*/i)[0];
   return un_declared_variable
     ? [true, un_declared_variable + " is not defined"]
     : [false, null];
+};
+
+const is_variable_name_valid = function (variable) {
+  return !variable.match(/^\s*\d+/);
+};
+
+const parse_err = (err) => "\x1b[31mparse error\x1b[0m: " + err;
+
+const create_variable = function (vars, variable, type, value) {
+  if (!isNaN(variable))
+    return parse_err(
+      `Unexpected token \`numeric literal (${variable}, ${variable})\`. Expected yield, an identifier`
+    );
+
+  if (!is_variable_name_valid(variable))
+    return parse_err(`Identifier cannot follow number`);
+
+  vars[variable] = { type: type, value: value };
+  return;
 };
 
 const execute_statement = function (statement, vars) {
@@ -36,9 +48,9 @@ const execute_statement = function (statement, vars) {
   const result = eval(exp);
 
   if (type && variable) {
-    vars[variable] = { type: type, value: result };
-    return;
+    return create_variable(vars, variable, type, result);
   }
+
   return result;
 };
 

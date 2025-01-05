@@ -1,4 +1,4 @@
-import { extract_operators } from "./evaluate.js";
+import { extract_operators, operators_regex } from "./evaluate.js";
 
 const find_variable = /^\s*(const|let)\s+(\w+)\s*=\s*(.+)\s*$|^(.+)$/;
 
@@ -14,18 +14,17 @@ export const extract_variable = function (statement) {
 export const replaceAll = (array, target, replacement) =>
   array.map((element) => (element === target ? replacement : element));
 
-const extract_identifiers = /\w+/g;
-const get_variable_value = (vars, variable) =>
-  vars[variable] ? vars[variable].value : variable;
+const get_operand_value = (vars, operand) =>
+  vars[operand] ? vars[operand].value : operand;
 
 export const replace_vars_with_values = function (vars, expression) {
-  const variables = expression.match(extract_identifiers);
+  const operands = expression.split(operators_regex);
   const operators = extract_operators(expression);
   return (
-    get_variable_value(vars, variables[0]) +
+    get_operand_value(vars, operands[0]) +
     operators.reduce(
       (exp, operator, index) =>
-        exp + operator + get_variable_value(vars, variables[index + 1]),
+        exp + operator + get_operand_value(vars, operands[index + 1]),
       ""
     )
   );
