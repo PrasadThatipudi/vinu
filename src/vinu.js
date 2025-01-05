@@ -18,9 +18,20 @@ const displayVinuVersion = () =>
     "color:ffffff; font-weight:bold"
   );
 
-const execute_expression = function (statement, vars) {
+const validate_variables = function (expression) {
+  const un_declared_variable = expression.match(/[a-z_]*/i)[0];
+  return un_declared_variable
+    ? [true, un_declared_variable + " is not defined"]
+    : [false, null];
+};
+
+const execute_statement = function (statement, vars) {
   const { variable, expression, type } = extract_variable(statement);
   const exp = replace_vars_with_values(vars, expression);
+  const [is_err, err] = validate_variables(exp);
+
+  if (is_err) return `Uncaught ReferenceError: ` + err;
+
   if (!is_expression_valid(exp)) return "parse error: Unexpected end";
   const result = eval(exp);
 
@@ -37,7 +48,7 @@ const main = function () {
 
   while (true) {
     const statement = prompt("> ");
-    console.log(execute_expression(statement, vars));
+    console.log(execute_statement(statement, vars));
   }
 };
 
