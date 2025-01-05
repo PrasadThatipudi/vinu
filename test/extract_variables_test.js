@@ -1,4 +1,8 @@
-import { extract_variable, replaceAll } from "../src/extract_variables.js";
+import {
+  extract_variable,
+  replace_vars_with_values,
+  replaceAll,
+} from "../src/extract_variables.js";
 import { assertEquals } from "jsr:@std/assert";
 
 Deno.test("extract_variable: basic declaration of const variable", () =>
@@ -33,4 +37,25 @@ Deno.test("replaceAll: empty array", () =>
 
 Deno.test("replaceAll: insufficient target", () =>
   assertEquals(replaceAll([2, 3, 4], 1, 3), [2, 3, 4])
+);
+
+Deno.test("replace_vars_with_values: basic expression", () =>
+  assertEquals(
+    replace_vars_with_values({ a: { value: 23 }, b: { value: 10 } }, "a+b"),
+    "23+10"
+  )
+);
+
+Deno.test("replace_vars_with_values: single variable", () =>
+  assertEquals(
+    replace_vars_with_values({ a: { value: 23 }, b: { value: 10 } }, "b"),
+    "10"
+  )
+);
+
+Deno.test("replace_vars_with_values: single number", () =>
+  assertEquals(
+    replace_vars_with_values({ a: { value: 23 }, b: { value: 10 } }, "120"),
+    "120"
+  )
 );

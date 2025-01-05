@@ -1,5 +1,8 @@
 import { is_expression_valid } from "./evaluate.js";
-import { extract_variable } from "./extract_variables.js";
+import {
+  extract_variable,
+  replace_vars_with_values,
+} from "./extract_variables.js";
 
 const vinu_version = `%cVinu 2.O
 %cexit using ctrl+d, ctrl+c, or close()
@@ -17,15 +20,15 @@ const displayVinuVersion = () =>
 
 const execute_expression = function (statement, vars) {
   const { variable, expression, type } = extract_variable(statement);
+  const exp = replace_vars_with_values(vars, expression);
+  if (!is_expression_valid(exp)) return "parse error: Unexpected end";
+  const result = eval(exp);
+
   if (type && variable) {
-    vars[variable] = { type: type, value: eval(expression) };
+    vars[variable] = { type: type, value: result };
     return;
   }
-
-  if (isNaN(expression)) return vars[expression.trim()].value;
-
-  if (!is_expression_valid(expression)) return "parse error: Unexpected end";
-  return eval(expression);
+  return result;
 };
 
 const main = function () {

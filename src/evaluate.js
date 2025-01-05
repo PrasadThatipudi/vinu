@@ -5,9 +5,10 @@ const div = (first, second) => first / second;
 const mod = (first, second) => first % second;
 export const math = { add, sub, mul, div, mod };
 
-const validate_expression = /^(\s*\d+\s*(\s*[+-/*%]\s*\d+)*)|\s*$/;
+const validate_expression = /^\s*\d+\s*(\s*[+-/*%]\s*\d+)*|\s*$/;
 export const extract_operands = (expression) => expression.match(/\d+/g);
-export const extract_operators = (expression) => expression.match(/[+-/*%]/g);
+export const extract_operators = (expression) =>
+  expression.match(/[+-/*%]/g) || [];
 export const is_expression_valid = (expression) =>
   !!expression.match(validate_expression);
 
