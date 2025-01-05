@@ -8,3 +8,6 @@ export const extract_variable = function (statement) {
     ? { variable, type, expression }
     : { expression: standalone };
 };
+
+export const replaceAll = (array, target, replacement) =>
+  array.map((element) => (element === target ? replacement : element));
