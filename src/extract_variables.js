@@ -4,18 +4,15 @@ const find_variable = /^\s*(const|let)\s+(\w+)\s*=(.+)$|^(.+)$/;
 
 export const extractVariable = function (statement) {
   const [, type, variable, expression, standalone] =
-    statement.match(find_variable) || [];
+    statement.match(find_variable);
 
   return variable && expression
     ? { variable, type, expression }
     : { expression: standalone };
 };
 
-export const replaceAll = (array, target, replacement) =>
-  array.map((element) => (element === target ? replacement : element));
-
 const getOperandValue = (variables, operand) =>
-  variables[operand] ? variables[operand].value : operand;
+  operand in variables ? variables[operand].value : operand;
 
 export const replaceVariablesWithValues = function (variables, expression) {
   const operands = expression.split(OPERATORS_REGEX).map((op) => op.trim());

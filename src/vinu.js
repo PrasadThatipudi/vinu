@@ -1,9 +1,6 @@
 import { evaluate } from "./evaluate.js";
 import { parseErr } from "./evaluate.js";
-import {
-  extractVariable,
-  replaceVariablesWithValues,
-} from "./extract_variables.js";
+import { extractVariable } from "./extract_variables.js";
 
 const vinu_version = `Vinu 2.O
 exit using ctrl+d, ctrl+c, or close()
@@ -11,14 +8,6 @@ exit using ctrl+d, ctrl+c, or close()
 To specify permissions, run \`vinu repl\` with allow flags.`;
 
 const displayVersion = () => console.log(vinu_version);
-
-const validateVariables = function (expression) {
-  const unDeclaredVariable = expression.match(/[a-z_]*/i)[0];
-  //Extract regex to variable
-  return unDeclaredVariable
-    ? [true, unDeclaredVariable + " is not defined"]
-    : [false, null];
-};
 
 const isVariableNameValid = function (variable) {
   return !variable.match(/^\s*\d+/);
@@ -33,20 +22,19 @@ const createVariable = function (vars, variable, type, value) {
   if (!isVariableNameValid(variable))
     return parseErr(`Identifier cannot follow number`);
 
+  if (variable in vars && vars[variable].type !== type)
+    return `Uncaught SyntaxError: Identifier '${variable}' has already been declared`;
+
   vars[variable] = { type, value };
   // const newVar = { type, value };
   // const result = { ...vars, [variable]: newVar };
-  return;
+  // return result;
 };
 
 const executeStatement = function (statement, variables) {
   const { variable, expression, type } = extractVariable(statement);
-  const exp = replaceVariablesWithValues(variables, expression);
-  const [isErr, err] = validateVariables(exp);
 
-  if (isErr) return `Uncaught ReferenceError: ` + err;
-
-  const result = evaluate(exp);
+  const result = evaluate(variables, expression);
 
   if (type && variable) {
     return createVariable(variables, variable, type, result);
@@ -60,12 +48,18 @@ const displayResult = (result) => console.log(result);
 const main = function () {
   displayVersion();
   const variables = {};
+  let statement = prompt("> ").trim();
 
-  while (true) {
-    const statement = prompt("> ");
-    if (statement.trim() === "close()") return;
+  while (statement !== "close()") {
+    // let result = undefined;
+    // if (statement.startsWith("const") || statement.startsWith("let")) {
+    //   variables = executeStatement(statement, variables);
+    // } else {
+    //   result = executeStatement(statement, variables);
+    // }
     const result = executeStatement(statement, variables);
     displayResult(result);
+    statement = prompt("> ").trim();
   }
 };
 
