@@ -33,7 +33,6 @@ const createVariable = function (vars, variable, type, value) {
 
 const executeStatement = function (statement, variables) {
   const { variable, expression, type } = extractVariable(statement);
-
   const result = evaluate(variables, expression);
 
   if (type && variable) {

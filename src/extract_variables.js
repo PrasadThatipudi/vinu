@@ -14,16 +14,16 @@ export const extractVariable = function (statement) {
 const getOperandValue = (variables, operand) =>
   operand in variables ? variables[operand].value : operand;
 
+const replaceAllVariablesWithVAlues = (variables, operands, operators) =>
+  operators.reduce(
+    (exp, operator, index) =>
+      exp.concat(operator, getOperandValue(variables, operands[index + 1])),
+    getOperandValue(variables, operands[0]).toString()
+  );
+
 export const replaceVariablesWithValues = function (variables, expression) {
   const operands = expression.split(OPERATORS_REGEX).map((op) => op.trim());
   const operators = extractOperators(expression);
-  // extract the return statement into a variable
-  return (
-    // getOperandValue(variables, operands[0]) +
-    operators.reduce(
-      (exp, operator, index) =>
-        exp.concat(operator, getOperandValue(variables, operands[index + 1])),
-      getOperandValue(variables, operands[0]).toString()
-    )
-  );
+
+  return replaceAllVariablesWithVAlues(variables, operands, operators);
 };
