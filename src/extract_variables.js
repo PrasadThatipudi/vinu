@@ -1,8 +1,8 @@
-import { extract_operators, operators_regex } from "./evaluate.js";
+import { extractOperators, OPERATORS_REGEX } from "./evaluate.js";
 
-const find_variable = /^\s*(const|let)\s+(\w+)\s*=\s*(.+)\s*$|^(.+)$/;
+const find_variable = /^\s*(const|let)\s+(\w+)\s*=(.+)$|^(.+)$/;
 
-export const extract_variable = function (statement) {
+export const extractVariable = function (statement) {
   const [, type, variable, expression, standalone] =
     statement.match(find_variable) || [];
 
@@ -14,18 +14,19 @@ export const extract_variable = function (statement) {
 export const replaceAll = (array, target, replacement) =>
   array.map((element) => (element === target ? replacement : element));
 
-const get_operand_value = (vars, operand) =>
-  vars[operand] ? vars[operand].value : operand;
+const getOperandValue = (variables, operand) =>
+  variables[operand] ? variables[operand].value : operand;
 
-export const replace_vars_with_values = function (vars, expression) {
-  const operands = expression.split(operators_regex);
-  const operators = extract_operators(expression);
+export const replaceVariablesWithValues = function (variables, expression) {
+  const operands = expression.split(OPERATORS_REGEX).map((op) => op.trim());
+  const operators = extractOperators(expression);
+  // extract the return statement into a variable
   return (
-    get_operand_value(vars, operands[0]) +
+    // getOperandValue(variables, operands[0]) +
     operators.reduce(
       (exp, operator, index) =>
-        exp + operator + get_operand_value(vars, operands[index + 1]),
-      ""
+        exp.concat(operator, getOperandValue(variables, operands[index + 1])),
+      getOperandValue(variables, operands[0]).toString()
     )
   );
 };

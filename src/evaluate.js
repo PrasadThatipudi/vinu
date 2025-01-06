@@ -5,24 +5,29 @@ const div = (first, second) => first / second;
 const mod = (first, second) => first % second;
 export const math = { add, sub, mul, div, mod };
 // non-capturing -> ?:
-const validate_expression = /^\s*\d+\s*(\s*[+-/*%]\s*\d+)*|\s*$/;
-export const extract_operands = (expression) => expression.match(/\d+/g);
-export const operators_regex = /[\+\-\/\*\%]/g;
-export const extract_operators = (expression) =>
-  expression.match(operators_regex) || [];
-export const is_expression_valid = (expression) =>
-  !!expression.match(validate_expression);
+const VALIDATE_EXPRESSION = /^\s*\d+\s*(\s*[+-/*%]\s*\d+)*$|^\s*$/;
+export const extractOperands = (expression) => expression.match(/\d+/g);
 
-export const execute_expression = (operations, operands, operators) =>
+export const OPERATORS_REGEX = /[\+\-\/\*\%]/g;
+
+export const extractOperators = (expression) =>
+  expression.match(OPERATORS_REGEX) || [];
+
+export const isExpressionValid = (expression) =>
+  !!expression.match(VALIDATE_EXPRESSION);
+
+export const executeExpression = (operations, operands, operators) =>
   operands.reduce((accumulator, operand, index) =>
     operations[operators[index - 1]](accumulator, operand)
-  );
+);
+
+export const parseErr = (err) => "\x1b[31mparse error\x1b[0m: " + err;
 
 export const evaluate = function (expression) {
-  if (!is_expression_valid(expression)) return "parse error: Unexpected eof";
-
+  if (!isExpressionValid(expression)) return parseErr("Unexpected eof");
+  
   const operations = { "+": add, "-": sub, "*": mul, "/": div, "%": mod };
-  const operands = extract_operands(expression).map((number) => +number);
-  const operators = extract_operators(expression);
-  return execute_expression(operations, operands, operators);
+  const operands = extractOperands(expression).map((number) => +number);
+  const operators = extractOperators(expression);
+  return executeExpression(operations, operands, operators);
 };
