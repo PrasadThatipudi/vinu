@@ -1,14 +1,15 @@
 import { extractOperators, OPERATORS_REGEX } from "./evaluate.js";
 
-const find_variable = /^\s*(const|let)\s+(\w+)\s*=(.+)$|^(.+)$/;
+const find_variable =
+  /^\s*(const(?=\s+)|let(?=\s+))?\s*(\w+)\s*=\s*(.+)$|^(.+)$/;
 
 export const extractVariable = function (statement) {
   const [, type, variable, expression, standalone] =
     statement.match(find_variable);
 
-  return variable && expression
-    ? { variable, type, expression }
-    : { expression: standalone };
+  return standalone
+    ? { expression: standalone }
+    : { variable, type, expression };
 };
 
 const getOperandValue = (variables, operand) =>

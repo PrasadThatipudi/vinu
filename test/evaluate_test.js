@@ -44,7 +44,7 @@ Deno.test("is_expression_valid: multiple operations", () =>
 );
 
 Deno.test("is_expression_valid: non-numeric characters", () =>
-  assertEquals(isExpressionValid("alpha"), true)
+  assertEquals(isExpressionValid("alpha"), false)
 );
 
 Deno.test("is_expression_valid: single operand with spaces", () =>
@@ -52,7 +52,7 @@ Deno.test("is_expression_valid: single operand with spaces", () =>
 );
 
 Deno.test("is_expression_valid: insufficient operands", () =>
-  assertEquals(isExpressionValid(" 23 +"), true)
+  assertEquals(isExpressionValid(" 23 +"), false)
 );
 
 Deno.test("execute_expression: single operand", () =>

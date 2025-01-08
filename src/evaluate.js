@@ -16,7 +16,8 @@ export const extractOperators = (expression) =>
   expression.match(OPERATORS_REGEX) || [];
 
 export const isExpressionValid = (expression) =>
-  !!expression.match(VALIDATE_EXPRESSION);
+  VALIDATE_EXPRESSION.test(expression);
+// !!expression.match(VALIDATE_EXPRESSION);
 
 const VALIDATE_VARIABLES = /[a-z_]+/i;
 
