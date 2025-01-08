@@ -44,7 +44,7 @@ const executeStatement = function (statement, variables) {
     return createVariable(variables, variable, type, result);
   }
 
-  return result;
+  return [variables, result];
 };
 
 const displayResult = (result) => console.log(result);
@@ -55,14 +55,9 @@ const main = function () {
   let statement = prompt("> ").trim();
 
   while (statement !== "close()") {
-    if (statement.startsWith("const") || statement.startsWith("let")) {
-      const [newVariables, err] = executeStatement(statement, variables);
-      variables = newVariables;
-      displayResult(err);
-    } else {
-      const result = executeStatement(statement, variables);
-      displayResult(result);
-    }
+    const [latestVariables, result] = executeStatement(statement, variables);
+    variables = latestVariables;
+    displayResult(result);
     statement = prompt("> ").trim();
   }
 };
