@@ -48,17 +48,18 @@ const executeStatement = function (statement, variables) {
 };
 
 const displayResult = (result) => console.log(result);
+const readStatement = () => prompt("> ").trim();
 
 const main = function () {
   displayVersion();
   let variables = {};
-  let statement = prompt("> ").trim();
+  let statement = readStatement();
 
   while (statement !== "close()") {
     const [latestVariables, result] = executeStatement(statement, variables);
     variables = latestVariables;
     displayResult(result);
-    statement = prompt("> ").trim();
+    statement = readStatement();
   }
 };
 
